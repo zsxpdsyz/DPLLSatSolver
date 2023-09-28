@@ -13,6 +13,6 @@ $(TARGET) : $(OBJ)
 	$(CC) -c $< -o $@
 
 clean :
-	rm main main.o
+	rm main main.o dpll.o
 
 .PHONY : all clean

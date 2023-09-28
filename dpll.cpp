@@ -3,7 +3,9 @@
 bool DPLL(Formula *formula) {
     formula->Get_Literal_Frequency();
 
-    while (Unit_Propagation(formula));
+    while (Unit_Propagation(formula)); 
+    formula->print();
+    cout << "complete unit propagation." << endl;
 
     while (Pure_Literal_Elimination(formula));
 
@@ -20,6 +22,7 @@ bool DPLL(Formula *formula) {
             break;
         }
     }
+    cout << "delete var x : " << x << endl;
     // 分别对该变量赋正值和负值
     Formula *formula1 = formula, *formula2 = formula;
     formula1->Delete_Assign_Var(x, true);
@@ -96,8 +99,9 @@ int Find_Single_Clause(Formula *formula) {
 
 // 孤立文字消去的过程。如果找到了孤立文字返回1，没找到返回0
 int Pure_Literal_Elimination(Formula *formula) {
-    for (auto pair : formula->literal_freq) {
+    for (auto &pair : formula->literal_freq) {
         // 存在孤立文字
+        cout << "PLE hash map pair : " << pair.first << " " << pair.second << endl;
         if (pair.second == 1) {
             pair.second = 0;
             // 查找该literal所在clause的位置，并将其删掉
@@ -105,6 +109,7 @@ int Pure_Literal_Elimination(Formula *formula) {
             return 1;
         }
     }
+    cout << "PLE tranverse end." << endl;
     // 如果没有找到孤立文字，那么返回0即可
     return 0;
 }
@@ -138,6 +143,7 @@ void Formula::Remove_Clause_of_Literal(int target_literal) {
         auto it = curr_clause->literal_list.begin();
         for (it; it != curr_clause->literal_list.end(); ++it) {
             // 删除包含该literal的clause
+            cout << "Remove clause loop it = " << *it;
             if (abs(*it) == target_literal) {
                 for (auto elem : curr_clause->literal_list) {
                     literal_freq[abs(elem)] -= 1;
@@ -147,6 +153,7 @@ void Formula::Remove_Clause_of_Literal(int target_literal) {
                 return;
             }
         }
+        cout << endl;
         // 如果没有找到，就不用进行删除
         pre_clause = curr_clause;
         curr_clause = curr_clause->next_clause;
@@ -166,7 +173,7 @@ bool Formula::Exist_Empty_Clause() {
     while (curr_clause) {
         if (curr_clause->literal_list.size() == 0)
             return true;
-        curr_clause = head_clause->next_clause;
+        curr_clause = curr_clause->next_clause;
     }
     return false;
 }

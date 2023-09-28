@@ -22,7 +22,7 @@ int main() {
     Formula *formula = new Formula;
     
     while (std::getline(inFile, line)) {
-        std::cout << line << std::endl;
+        // std::cout << line << std::endl;
         std::stringstream ss(line);
         if (line[0] == 'p') {
             ss >> trash >> trash;
@@ -39,6 +39,7 @@ int main() {
         }
     }
     cout << "num literal : " << num_literal << " num clause : " << num_clause << endl;
+    formula->print();
 
     sat = DPLL(formula);
 

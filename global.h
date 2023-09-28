@@ -11,7 +11,7 @@ public:
     vector<int> literal_list;
     Clause *next_clause;
 
-    Clause() : next_clause(nullptr){}
+    // Clause() : next_clause(nullptr){}
 };
 
 class Formula {
@@ -23,19 +23,27 @@ public:
     Formula() : head_clause(nullptr){}
 
     void insert(Clause *newClause) {
-        Clause *temp = head_clause;
-        head_clause = newClause;
-        head_clause->next_clause = temp;
+        if (head_clause == nullptr) {
+            head_clause = newClause;
+        } else {
+            Clause *temp = head_clause;
+            head_clause = newClause;
+            head_clause->next_clause = temp;
+        }
+    }
 
-        // if (!head_clause) {
-        //     head_clause = newClause;
-        // } else {
-        //     Clause *curr_clause = head_clause;
-        //     while (curr_clause->next_clause) {
-        //         curr_clause = curr_clause -> next_clause;
-        //     } 
-        //     curr_clause->next_clause = newClause;
-        // }
+    void print() {
+        int cnt = 0;
+        Clause *curr_clause = head_clause;
+        while (curr_clause != nullptr) {
+            for (auto data : curr_clause->literal_list) {
+                cout << data << "  ";
+            }
+            cout << endl;
+            cnt++;
+            curr_clause = curr_clause->next_clause;
+        }
+        cout << "All clause num is : " << cnt << endl;
     }
 
     void Get_Literal_Frequency();
