@@ -24,22 +24,23 @@ int main() {
     while (std::getline(inFile, line)) {
         // std::cout << line << std::endl;
         std::stringstream ss(line);
-        if (line[0] == 'p') {
-            ss >> trash >> trash;
-            ss >> num_literal >> num_clause;
-            read_flag = true;
-        }
-
-        if (read_flag) {
+        if (read_flag && !line.empty()) {
             Clause *clause = new Clause();
+            // cout << "read line is empty : " << line << endl;
             while (ss >> literal && literal != 0) {
                 clause->literal_list.push_back(literal);
             }
             formula->insert(clause);
         }
+
+        if (line[0] == 'p') {
+            ss >> trash >> trash;
+            ss >> num_literal >> num_clause;
+            read_flag = true;
+        }   
     }
     cout << "num literal : " << num_literal << " num clause : " << num_clause << endl;
-    formula->print();
+    // formula->print();
 
     sat = DPLL(formula);
 

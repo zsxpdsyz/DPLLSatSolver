@@ -1,4 +1,5 @@
 CC := g++
+CXXFLAG := -g
 
 TARGET := main
 SRC := $(wildcard *.cpp)
@@ -7,10 +8,10 @@ OBJ := $(patsubst %.cpp, %.o, $(SRC))
 all : $(TARGET)
 
 $(TARGET) : $(OBJ) 
-	$(CC) $^ -o $@
+	$(CC) $(CXXFLAG) $^ -o $@
 
 %.o : %.cpp
-	$(CC) -c $< -o $@
+	$(CC) $(CXXFLAG) -c $< -o $@
 
 clean :
 	rm main main.o dpll.o

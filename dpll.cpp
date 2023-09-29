@@ -27,11 +27,17 @@ bool DPLL(Formula *formula) {
     Formula *formula1 = formula, *formula2 = formula;
     formula1->Delete_Assign_Var(x, true);
     formula2->Delete_Assign_Var(x, false);
+    formula1->print();
+    cout << "print formula1:" << endl;
+    formula2->print();
+    cout << "print formula2:" << endl;
+    cout << "delete complete" << endl;
 
-    return DPLL(formula1) | DPLL(formula2);
+    return (DPLL(formula1) | DPLL(formula2));
 }
 
 int Unit_Propagation(Formula *formula) {
+    formula->print();
     int unit_literal;
     unit_literal = Find_Single_Clause(formula);
     // 如果为0，说明当前不存在单子句，可以跳过单子句传播的过程
@@ -101,7 +107,7 @@ int Find_Single_Clause(Formula *formula) {
 int Pure_Literal_Elimination(Formula *formula) {
     for (auto &pair : formula->literal_freq) {
         // 存在孤立文字
-        cout << "PLE hash map pair : " << pair.first << " " << pair.second << endl;
+        // cout << "PLE hash map pair : " << pair.first << " " << pair.second << endl;
         if (pair.second == 1) {
             pair.second = 0;
             // 查找该literal所在clause的位置，并将其删掉
@@ -109,7 +115,7 @@ int Pure_Literal_Elimination(Formula *formula) {
             return 1;
         }
     }
-    cout << "PLE tranverse end." << endl;
+    // cout << "PLE tranverse end." << endl;
     // 如果没有找到孤立文字，那么返回0即可
     return 0;
 }
@@ -171,6 +177,7 @@ bool Formula::Empty() {
 bool Formula::Exist_Empty_Clause() {
     Clause *curr_clause = head_clause;
     while (curr_clause) {
+        // cout << "current clause size = " << curr_clause->literal_list.size() << endl;
         if (curr_clause->literal_list.size() == 0)
             return true;
         curr_clause = curr_clause->next_clause;
@@ -186,8 +193,10 @@ void Formula::Delete_Assign_Var(int target_literal, bool mode) {
 
     while (curr_clause) {
         auto it = curr_clause->literal_list.begin();
-        for (it; it != curr_clause->literal_list.end(); it++) {
+        // cout << "it = ";
+        for (it; it != curr_clause->literal_list.end(); ) {
             // 如果给变量赋的是正值
+            // cout << *it << "  ";
             if (mode) {
                 if (*it == target_literal) {
                     // 删除整个子句
@@ -196,7 +205,8 @@ void Formula::Delete_Assign_Var(int target_literal, bool mode) {
                 } else if (*it == -target_literal) {
                     // 删除一个文字
                     it = curr_clause->literal_list.erase(it);
-                }
+                } else 
+                    it++;
             } else {
                 if (*it == -target_literal) {
                     // 删除整个子句
@@ -205,12 +215,14 @@ void Formula::Delete_Assign_Var(int target_literal, bool mode) {
                 } else if (*it == target_literal) {
                     // 删除一个文字
                     it = curr_clause->literal_list.erase(it);
-                }
+                } else 
+                    it++;
             }
         }
         pre_clause = curr_clause;
 
         EndLoop:
+        // cout << endl;
         curr_clause = curr_clause->next_clause;
     }
     head_clause = dummy_clause->next_clause;

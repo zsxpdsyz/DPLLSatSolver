@@ -11,7 +11,7 @@ public:
     vector<int> literal_list;
     Clause *next_clause;
 
-    // Clause() : next_clause(nullptr){}
+    Clause() : next_clause(nullptr){}
 };
 
 class Formula {
@@ -35,6 +35,8 @@ public:
     void print() {
         int cnt = 0;
         Clause *curr_clause = head_clause;
+        // 这里循环的时候必须要判定的是下一个语句是不是空
+        // 因为即便是空指针，依然可以给一个指针赋值
         while (curr_clause != nullptr) {
             for (auto data : curr_clause->literal_list) {
                 cout << data << "  ";
