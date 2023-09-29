@@ -4,7 +4,7 @@ bool DPLL(Formula *formula) {
     formula->Get_Literal_Frequency();
 
     while (Unit_Propagation(formula)); 
-    formula->print();
+    // formula->print();
     cout << "complete unit propagation." << endl;
 
     while (Pure_Literal_Elimination(formula));
@@ -25,19 +25,21 @@ bool DPLL(Formula *formula) {
     cout << "delete var x : " << x << endl;
     // 分别对该变量赋正值和负值
     Formula *formula1 = formula, *formula2 = formula;
+    // 因为这两个指针都指向了一个共享的内存地址，因此对于formula1中值的修改也会传递到formula和formula2
+    // TODO：需要修改
     formula1->Delete_Assign_Var(x, true);
     formula2->Delete_Assign_Var(x, false);
-    formula1->print();
-    cout << "print formula1:" << endl;
-    formula2->print();
-    cout << "print formula2:" << endl;
-    cout << "delete complete" << endl;
+    // formula1->print();
+    // cout << "print formula1:" << endl;
+    // formula2->print();
+    // cout << "print formula2:" << endl;
+    // cout << "delete complete" << endl;
 
     return (DPLL(formula1) | DPLL(formula2));
 }
 
 int Unit_Propagation(Formula *formula) {
-    formula->print();
+    // formula->print();
     int unit_literal;
     unit_literal = Find_Single_Clause(formula);
     // 如果为0，说明当前不存在单子句，可以跳过单子句传播的过程

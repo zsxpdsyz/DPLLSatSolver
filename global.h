@@ -2,7 +2,8 @@
 #include <vector>
 #include <unordered_map>
 
-#define CNF_IN_FILE "./src/Standard/functional_test/sat-20.cnf"
+// #define CNF_IN_FILE "./src/Standard/functional_test/sat-20.cnf"
+#define CNF_IN_FILE "./src/Standard/functional_test/unsat-5cnf-30.cnf"
 
 using namespace std;
 
