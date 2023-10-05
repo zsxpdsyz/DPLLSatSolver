@@ -6,8 +6,11 @@
 
 // #define CNF_IN_FILE "./src/Sat/S/problem2-50.cnf"
 #define CNF_IN_FILE "./src/Standard/functional_test/sat-20.cnf"
+// #define CNF_IN_FILE "./src/Standard/functional_test/unsat-5cnf-30.cnf"
 
 using namespace std;
+
+vector<int> resGlobal;
 
 int main() {
     // 读取目标文件
@@ -48,6 +51,12 @@ int main() {
     sat = DPLL(formula);
 
     cout << "sat : " << sat << endl;
+
+    string inFileStr = CNF_IN_FILE;
+    string outFileStr = inFileStr.substr(0, inFileStr.length()-3);
+    outFileStr += "res";
+    ofstream outFile(outFileStr);
+    Display_Res(outFile);
 
     delete formula;
     return 0;

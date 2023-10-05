@@ -1,11 +1,16 @@
+#ifndef GLOBAL_H
+#define GLOBAL_H
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <stack>
 
 // #define CNF_IN_FILE "./src/Standard/functional_test/sat-20.cnf"
 // #define CNF_IN_FILE "./src/Standard/functional_test/unsat-5cnf-30.cnf"
 
 using namespace std;
+
+extern vector<int> resGlobal;
 
 class Clause {
 public:
@@ -62,3 +67,6 @@ bool DPLL(Formula *formula);
 int Unit_Propagation(Formula *formula);
 int Pure_Literal_Elimination(Formula *formula);
 int Find_Single_Clause(Formula *formula);
+void Display_Res(ostream &output);
+
+#endif

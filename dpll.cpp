@@ -1,11 +1,14 @@
 #include "global.h"
+#include <algorithm>
+
+// extern stack<int> resGlobal;
 
 bool DPLL(Formula *formula) {
     formula->Get_Literal_Frequency();
 
     while (Unit_Propagation(formula)); 
-    formula->print();
-    cout << "complete unit propagation." << endl;
+    // formula->print();
+    // cout << "complete unit propagation." << endl;
 
     while (Pure_Literal_Elimination(formula));
 
@@ -22,7 +25,7 @@ bool DPLL(Formula *formula) {
             break;
         }
     }
-    cout << "delete var x : " << x << endl;
+    // cout << "delete var x : " << x << endl;
     // formula->print_hash();
     // 分别对该变量赋正值和负值
     Formula *formula1 = new Formula(*formula), *formula2 = new Formula(*formula);
@@ -31,13 +34,25 @@ bool DPLL(Formula *formula) {
     formula2->Delete_Assign_Var(x, false);
     formula1->Delete_Assign_Var(x, true);
     
-    formula1->print();
-    cout << "print formula1:" << endl;
-    formula2->print();
-    cout << "print formula2:" << endl;
-    cout << "delete complete" << endl;
-
-    return (DPLL(formula1) | DPLL(formula2));
+    // formula1->print();
+    // cout << "print formula1:" << endl;
+    // formula2->print();
+    // cout << "print formula2:" << endl;
+    // cout << "delete complete" << endl;
+    bool res1, res2;
+    res1 = DPLL(formula1);
+    res2 = DPLL(formula2);
+    if (res1 & res2) {
+        return true;
+    } else if (res1) {
+        resGlobal.push_back(x);
+        return true;
+    } else if (res2) {
+        resGlobal.push_back(-x);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 int Unit_Propagation(Formula *formula) {
@@ -47,6 +62,9 @@ int Unit_Propagation(Formula *formula) {
     // 如果为0，说明当前不存在单子句，可以跳过单子句传播的过程
     if (!unit_literal)
         return 0;
+    // 被删除的单子句必然要被记录在结果中
+    resGlobal.push_back(unit_literal);
+
     // 因为单子句被删除了，所以他的数量统计减1
     formula->literal_freq[abs(unit_literal)] -= 1;
 
@@ -124,6 +142,14 @@ int Pure_Literal_Elimination(Formula *formula) {
     return 0;
 }
 
+void Display_Res(ostream &outStream) {
+    sort(resGlobal.begin(), resGlobal.end(), [](int a, int b) ->bool {return abs(a) < abs(b);});
+    for (auto i : resGlobal) {
+        outStream << i << " ";
+    }
+    outStream << endl;
+}
+
 // 深拷贝，需要进行链表复制操作
 Formula::Formula(const Formula &obj) {
     head_clause = new Clause;
@@ -178,6 +204,7 @@ void Formula::Remove_Clause_of_Literal(int target_literal) {
             // 删除包含该literal的clause
             // cout << "Remove clause loop it = " << *it;
             if (abs(*it) == target_literal) {
+                resGlobal.push_back(*it);
                 for (auto elem : curr_clause->literal_list) {
                     literal_freq[abs(elem)] -= 1;
                 }
