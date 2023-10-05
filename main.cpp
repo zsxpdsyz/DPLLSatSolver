@@ -4,6 +4,9 @@
 #include <sstream>
 #include "global.h"
 
+// #define CNF_IN_FILE "./src/Sat/S/problem2-50.cnf"
+#define CNF_IN_FILE "./src/Standard/functional_test/sat-20.cnf"
+
 using namespace std;
 
 int main() {

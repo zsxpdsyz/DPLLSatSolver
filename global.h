@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 // #define CNF_IN_FILE "./src/Standard/functional_test/sat-20.cnf"
-#define CNF_IN_FILE "./src/Standard/functional_test/unsat-5cnf-30.cnf"
+// #define CNF_IN_FILE "./src/Standard/functional_test/unsat-5cnf-30.cnf"
 
 using namespace std;
 
@@ -22,6 +22,7 @@ public:
     unordered_map<int, int> literal_freq;
 
     Formula() : head_clause(nullptr){}
+    Formula(const Formula &obj);
 
     void insert(Clause *newClause) {
         if (head_clause == nullptr) {
@@ -49,6 +50,7 @@ public:
         cout << "All clause num is : " << cnt << endl;
     }
 
+    void print_hash();
     void Get_Literal_Frequency();
     void Remove_Clause_of_Literal(int literal);
     bool Empty();

@@ -4,7 +4,7 @@ bool DPLL(Formula *formula) {
     formula->Get_Literal_Frequency();
 
     while (Unit_Propagation(formula)); 
-    // formula->print();
+    formula->print();
     cout << "complete unit propagation." << endl;
 
     while (Pure_Literal_Elimination(formula));
@@ -23,17 +23,19 @@ bool DPLL(Formula *formula) {
         }
     }
     cout << "delete var x : " << x << endl;
+    // formula->print_hash();
     // 分别对该变量赋正值和负值
-    Formula *formula1 = formula, *formula2 = formula;
+    Formula *formula1 = new Formula(*formula), *formula2 = new Formula(*formula);
     // 因为这两个指针都指向了一个共享的内存地址，因此对于formula1中值的修改也会传递到formula和formula2
     // TODO：需要修改
-    formula1->Delete_Assign_Var(x, true);
     formula2->Delete_Assign_Var(x, false);
-    // formula1->print();
-    // cout << "print formula1:" << endl;
-    // formula2->print();
-    // cout << "print formula2:" << endl;
-    // cout << "delete complete" << endl;
+    formula1->Delete_Assign_Var(x, true);
+    
+    formula1->print();
+    cout << "print formula1:" << endl;
+    formula2->print();
+    cout << "print formula2:" << endl;
+    cout << "delete complete" << endl;
 
     return (DPLL(formula1) | DPLL(formula2));
 }
@@ -122,13 +124,30 @@ int Pure_Literal_Elimination(Formula *formula) {
     return 0;
 }
 
+// 深拷贝，需要进行链表复制操作
+Formula::Formula(const Formula &obj) {
+    head_clause = new Clause;
+    head_clause->literal_list = obj.head_clause->literal_list;
+    Clause *prev_elem = new Clause;
+    prev_elem = head_clause;
+    Clause *obj_curr = new Clause;
+    obj_curr = obj.head_clause->next_clause;
+    while (obj_curr) {
+        Clause *curr_elem = new Clause;
+        curr_elem->literal_list = obj_curr->literal_list;
+        prev_elem->next_clause = curr_elem;
+        prev_elem = curr_elem;
+        obj_curr = obj_curr->next_clause;
+    }
+} 
+
 // hash map的键都是正值，使用abs函数
 void Formula::Get_Literal_Frequency() {
     // 每次需要对hash map清空
     literal_freq.clear();
     Clause *temp_clause = head_clause;
     while (temp_clause) {
-        for (auto it : temp_clause->literal_list) {
+        for (auto &it : temp_clause->literal_list) {
             // 如果hash map中没有这个元素，那么需要把他加进去
             if (literal_freq.find(abs(it)) == literal_freq.end()) {
                 literal_freq.insert(make_pair(abs(it), 1));
@@ -137,6 +156,12 @@ void Formula::Get_Literal_Frequency() {
             }
         }
         temp_clause = temp_clause->next_clause;
+    }
+}
+
+void Formula::print_hash() {
+    for (auto &pair : literal_freq) {
+        cout << "key : " << pair.first << "  value: " << pair.second << endl;
     }
 }
 
@@ -151,7 +176,7 @@ void Formula::Remove_Clause_of_Literal(int target_literal) {
         auto it = curr_clause->literal_list.begin();
         for (it; it != curr_clause->literal_list.end(); ++it) {
             // 删除包含该literal的clause
-            cout << "Remove clause loop it = " << *it;
+            // cout << "Remove clause loop it = " << *it;
             if (abs(*it) == target_literal) {
                 for (auto elem : curr_clause->literal_list) {
                     literal_freq[abs(elem)] -= 1;
@@ -161,7 +186,7 @@ void Formula::Remove_Clause_of_Literal(int target_literal) {
                 return;
             }
         }
-        cout << endl;
+        // cout << endl;
         // 如果没有找到，就不用进行删除
         pre_clause = curr_clause;
         curr_clause = curr_clause->next_clause;
@@ -210,6 +235,7 @@ void Formula::Delete_Assign_Var(int target_literal, bool mode) {
                 } else 
                     it++;
             } else {
+                // cout << *it << " ";
                 if (*it == -target_literal) {
                     // 删除整个子句
                     pre_clause->next_clause = curr_clause->next_clause;
