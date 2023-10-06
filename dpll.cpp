@@ -20,9 +20,11 @@ bool DPLL(Formula *formula) {
 
     if (formula->Empty())
         return true;
-    if (formula->Exist_Empty_Clause()) 
+    if (formula->Exist_Empty_Clause()) {
+        resGlobal.erase(resGlobal.begin()+begin_num, resGlobal.begin()+begin_num+del_num);
         return false;
-
+    }
+        
     // 选择一个变量对其赋值
     int x;
     for (auto pair : formula->literal_freq) {
@@ -46,24 +48,41 @@ bool DPLL(Formula *formula) {
     // cout << "print formula2:" << endl;
     // cout << "delete complete" << endl;
     bool res1, res2;
-    cout << "Enter x = 0." << endl;
+    cout << "Enter x : " << x << " = 1." << endl;
     res1 = DPLL(formula1);
-    cout << "Enter x = 1." << endl;
-    res2 = DPLL(formula2);
-    if (res1 & res2) {
-        return true;
-    } else if (res1) {
+    cout << "Exit x : " << x << " = 1." << " res = " << res1 << endl;
+    Display_Res(cout);
+    if (res1) {
         resGlobal.push_back(x);
-        del_num++;
         return true;
-    } else if (res2) {
+    }
+
+    cout << "Enter x : " << x << " = 0." << endl;
+    res2 = DPLL(formula2);
+    cout << "Exit x : " << x << " = 0." << " res = " << res2 << endl;
+    Display_Res(cout);
+    if (res2) {
         resGlobal.push_back(-x);
-        del_num++;
         return true;
     } else {
         resGlobal.erase(resGlobal.begin()+begin_num, resGlobal.begin()+begin_num+del_num);
         return false;
-    }
+    }      
+
+    // if (res1 & res2) {
+    //     return true;
+    // } else if (res1) {
+    //     resGlobal.push_back(x);
+    //     del_num++;
+    //     return true;
+    // } else if (res2) {
+    //     resGlobal.push_back(-x);
+    //     del_num++;
+    //     return true;
+    // } else {
+    //     resGlobal.erase(resGlobal.begin()+begin_num, resGlobal.begin()+begin_num+del_num);
+    //     return false;
+    // }
 }
 
 int Unit_Propagation(Formula *formula) {
@@ -154,7 +173,7 @@ int Pure_Literal_Elimination(Formula *formula) {
 }
 
 void Display_Res(ostream &outStream) {
-    // sort(resGlobal.begin(), resGlobal.end(), [](int a, int b) ->bool {return abs(a) < abs(b);});
+    sort(resGlobal.begin(), resGlobal.end(), [](int a, int b) ->bool {return abs(a) < abs(b);});
     for (auto i : resGlobal) {
         outStream << i << " ";
     }
