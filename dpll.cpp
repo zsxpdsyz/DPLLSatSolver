@@ -4,13 +4,19 @@
 // extern stack<int> resGlobal;
 
 bool DPLL(Formula *formula) {
+    Display_Res(cout);
     formula->Get_Literal_Frequency();
+    int begin_num = resGlobal.size(), del_num = 0;
 
-    while (Unit_Propagation(formula)); 
+    while (Unit_Propagation(formula)) {
+        del_num++;
+    }
     // formula->print();
     // cout << "complete unit propagation." << endl;
 
-    while (Pure_Literal_Elimination(formula));
+    while (Pure_Literal_Elimination(formula)) {
+        del_num++;
+    }
 
     if (formula->Empty())
         return true;
@@ -40,17 +46,22 @@ bool DPLL(Formula *formula) {
     // cout << "print formula2:" << endl;
     // cout << "delete complete" << endl;
     bool res1, res2;
+    cout << "Enter x = 0." << endl;
     res1 = DPLL(formula1);
+    cout << "Enter x = 1." << endl;
     res2 = DPLL(formula2);
     if (res1 & res2) {
         return true;
     } else if (res1) {
         resGlobal.push_back(x);
+        del_num++;
         return true;
     } else if (res2) {
         resGlobal.push_back(-x);
+        del_num++;
         return true;
     } else {
+        resGlobal.erase(resGlobal.begin()+begin_num, resGlobal.begin()+begin_num+del_num);
         return false;
     }
 }
@@ -143,7 +154,7 @@ int Pure_Literal_Elimination(Formula *formula) {
 }
 
 void Display_Res(ostream &outStream) {
-    sort(resGlobal.begin(), resGlobal.end(), [](int a, int b) ->bool {return abs(a) < abs(b);});
+    // sort(resGlobal.begin(), resGlobal.end(), [](int a, int b) ->bool {return abs(a) < abs(b);});
     for (auto i : resGlobal) {
         outStream << i << " ";
     }
