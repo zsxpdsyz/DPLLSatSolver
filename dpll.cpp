@@ -67,22 +67,7 @@ bool DPLL(Formula *formula) {
     } else {
         resGlobal.erase(resGlobal.begin()+begin_num, resGlobal.begin()+begin_num+del_num);
         return false;
-    }      
-
-    // if (res1 & res2) {
-    //     return true;
-    // } else if (res1) {
-    //     resGlobal.push_back(x);
-    //     del_num++;
-    //     return true;
-    // } else if (res2) {
-    //     resGlobal.push_back(-x);
-    //     del_num++;
-    //     return true;
-    // } else {
-    //     resGlobal.erase(resGlobal.begin()+begin_num, resGlobal.begin()+begin_num+del_num);
-    //     return false;
-    // }
+    }
 }
 
 int Unit_Propagation(Formula *formula) {
